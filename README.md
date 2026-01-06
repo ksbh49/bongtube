@@ -48,10 +48,11 @@ npm run client
 
 ## 실사용 배포
 
+- **완전한 배포 가이드**: [COMPLETE_DEPLOYMENT_GUIDE.md](./COMPLETE_DEPLOYMENT_GUIDE.md) ⭐ **처음부터 끝까지**
 - **배포 가이드**: [DEPLOYMENT.md](./DEPLOYMENT.md)
 - **AWS 서버 배포**: [AWS_DEPLOYMENT.md](./AWS_DEPLOYMENT.md)
 - **AWS + Nginx + Git 워크플로우**: [AWS_NGINX_GIT_WORKFLOW.md](./AWS_NGINX_GIT_WORKFLOW.md)
-- **홈페이지 업데이트**: [UPDATE_GUIDE.md](./UPDATE_GUIDE.md) ⭐
+- **홈페이지 업데이트**: [UPDATE_GUIDE.md](./UPDATE_GUIDE.md)
 - **Git 사용 가이드**: [GIT_SETUP.md](./GIT_SETUP.md)
 - **도메인 연결**: [DOMAIN_SETUP.md](./DOMAIN_SETUP.md)
 - **HTTPS 설정**: [HTTPS_SETUP.md](./HTTPS_SETUP.md)
