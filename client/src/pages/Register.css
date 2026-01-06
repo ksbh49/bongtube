@@ -95,25 +95,91 @@
   margin-top: 2rem;
 }
 
+@media (max-width: 968px) {
+  .register {
+    padding: 3rem 1.5rem;
+  }
+  
+  .register-card {
+    padding: 2.5rem;
+  }
+}
+
 @media (max-width: 768px) {
+  .register {
+    padding: 2rem 1rem;
+  }
+  
   .register-card {
     padding: 2rem 1.5rem;
+    border-radius: 1.5rem;
   }
   
   .register-title {
     font-size: 2rem;
+    margin-bottom: 1.5rem;
+  }
+  
+  .step-title {
+    font-size: 1.5rem;
+    margin-bottom: 1.5rem;
+  }
+  
+  .agreement-step {
+    max-height: 60vh;
+  }
+  
+  .agreement-box {
+    padding: 1.25rem;
+  }
+  
+  .agreement-box h3 {
+    font-size: 1.125rem;
   }
   
   .agreement-content {
     max-height: 200px;
-    font-size: 0.75rem;
+    font-size: 0.875rem;
+    padding: 0.875rem;
+  }
+  
+  .checkbox-label {
+    font-size: 1rem;
+  }
+  
+  .register-form {
+    gap: 1.25rem;
   }
   
   .form-actions {
     flex-direction: column;
+    gap: 0.75rem;
+    margin-top: 1.5rem;
   }
   
   .form-actions button {
     width: 100%;
+  }
+}
+
+@media (max-width: 480px) {
+  .register {
+    padding: 1.5rem 0.75rem;
+  }
+  
+  .register-card {
+    padding: 1.5rem 1.25rem;
+  }
+  
+  .register-title {
+    font-size: 1.75rem;
+  }
+  
+  .step-title {
+    font-size: 1.25rem;
+  }
+  
+  .agreement-content {
+    font-size: 0.75rem;
   }
 }

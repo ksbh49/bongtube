@@ -80,9 +80,28 @@
   margin-bottom: 0.5rem;
 }
 
+@media (max-width: 968px) {
+  .service-info {
+    padding: 3rem 1.5rem;
+  }
+  
+  .service-content {
+    max-width: 100%;
+  }
+}
+
 @media (max-width: 768px) {
+  .service-info {
+    padding: 2rem 1rem;
+  }
+  
   .page-title {
     font-size: 2rem;
+    margin-bottom: 2rem;
+  }
+  
+  .service-section {
+    gap: 1.5rem;
   }
   
   .service-text-right,
@@ -92,5 +111,51 @@
   
   .service-item {
     padding: 1.5rem;
+    border-radius: 1.5rem;
+  }
+  
+  .service-title {
+    font-size: 1.5rem;
+    margin-bottom: 1.25rem;
+  }
+  
+  .service-description {
+    font-size: 1rem;
+    line-height: 1.7;
+  }
+  
+  .benefits-list,
+  .reasons-list {
+    font-size: 1rem;
+    line-height: 1.8;
+    padding-left: 1.25rem;
+  }
+}
+
+@media (max-width: 480px) {
+  .service-info {
+    padding: 1.5rem 0.75rem;
+  }
+  
+  .page-title {
+    font-size: 1.75rem;
+    margin-bottom: 1.5rem;
+  }
+  
+  .service-item {
+    padding: 1.25rem;
+  }
+  
+  .service-title {
+    font-size: 1.25rem;
+  }
+  
+  .service-description {
+    font-size: 0.95rem;
+  }
+  
+  .benefits-list,
+  .reasons-list {
+    font-size: 0.95rem;
   }
 }

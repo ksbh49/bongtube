@@ -202,6 +202,16 @@ const Application = () => {
           <div className="form-row">
             <div className="form-group">
               <label>백업 코드 3개 * (모두 8자리 숫자)</label>
+              <div className="backup-code-link">
+                <a 
+                  href="https://accounts.google.com/v3/signin/challenge/pk?TL=AHE1sGXXLOL9BdfwCfqN8ZIaMVNL55yLPlpN-rzelSpw4s00tOuEUkTXlcod8Zzu&authuser=0&cid=2&continue=https%3A%2F%2Fmyaccount.google.com%2Fsigninoptions%2Ftwosv%3Fgar%3DWzJd%26rapt%3DAEjHL4MuKYZ8yUB&dsh=S-1273108778%3A1767602536301808&flowName=GlifWebSignIn&followup=https%3A%2F%2Fmyaccount.google.com%2Fsigninoptions%2Ftwosv%3Fgar%3DWzJd%26rapt%3DAEjHL4MuKYZ8yUB&ifkv=Ac2yZaW6fM-UvK7t7YQJZsrE_fVHRzzCdXSc5Mv1CtJZulEYsiuaDqTtQgej3oS5n9axan_sLgS4yA&osid=1&rart=ANgoxcehzsC5VGyE82m8KIJ-BIKtEq3BGZa9f9dQxW67b4OgMdrcbtMt9doDhDQQLkq3LW0d3VTvWHBzQP65cqXypQw92HoOiFZTT7wEgxKxheeyKK9UFxU&rpbg=1"
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="link-mint"
+                >
+                  복구 코드 발급 링크 (클릭하여 확인)
+                </a>
+              </div>
               <div className="backup-codes">
                 <input
                   type="text"

@@ -93,17 +93,90 @@
   font-size: 0.9rem;
 }
 
+@media (max-width: 968px) {
+  .navbar {
+    padding: 1rem 1.5rem;
+  }
+  
+  .navbar-menu {
+    gap: 1.5rem;
+  }
+}
+
 @media (max-width: 768px) {
   .navbar {
     padding: 1rem;
   }
   
-  .navbar-menu {
+  .navbar-container {
     flex-wrap: wrap;
     gap: 1rem;
   }
   
-  .navbar-logo {
-    font-size: 1.5rem;
+  .navbar-menu {
+    flex-wrap: wrap;
+    gap: 0.75rem;
+    width: 100%;
+    justify-content: center;
+  }
+  
+  .navbar-link {
+    padding: 0.5rem 0.75rem;
+    font-size: 0.9rem;
+  }
+  
+  .logo-text {
+    font-size: 1.25rem;
+  }
+  
+  .logo-subtitle {
+    font-size: 0.75rem;
+  }
+  
+  .logo-box {
+    width: 36px;
+    height: 36px;
+    font-size: 1.25rem;
+  }
+  
+  .user-info {
+    flex-wrap: wrap;
+    gap: 0.75rem;
+    justify-content: center;
+    width: 100%;
+  }
+  
+  .user-name {
+    font-size: 0.9rem;
+  }
+  
+  .btn-small {
+    padding: 0.5rem 1rem;
+    font-size: 0.875rem;
+  }
+}
+
+@media (max-width: 480px) {
+  .navbar {
+    padding: 0.75rem;
+  }
+  
+  .navbar-menu {
+    gap: 0.5rem;
+  }
+  
+  .navbar-link {
+    padding: 0.5rem;
+    font-size: 0.85rem;
+  }
+  
+  .logo-text {
+    font-size: 1.125rem;
+  }
+  
+  .logo-box {
+    width: 32px;
+    height: 32px;
+    font-size: 1.125rem;
   }
 }

@@ -136,9 +136,6 @@ const Home = () => {
 
       <div className="home-footer">
         <div className="container">
-          <p className="footer-note">
-            * 관리자 페이지에서 상품을 수정해도 "신청하기"에는 기간이 3개월인 상품만 노출됩니다.
-          </p>
           <p className="footer-copyright">© 2026 봉튜브</p>
         </div>
       </div>

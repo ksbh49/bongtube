@@ -139,6 +139,16 @@
   color: var(--gray-dark);
 }
 
+@media (max-width: 968px) {
+  .payment {
+    padding: 3rem 1.5rem;
+  }
+  
+  .payment-content {
+    gap: 1.5rem;
+  }
+}
+
 @media (max-width: 768px) {
   .payment {
     padding: 2rem 1rem;
@@ -147,18 +157,81 @@
   .order-summary,
   .payment-info {
     padding: 1.5rem;
+    border-radius: 1.5rem;
   }
   
   .summary-title,
   .info-title {
     font-size: 1.5rem;
+    margin-bottom: 1.5rem;
+  }
+  
+  .summary-item {
+    padding: 0.875rem 0;
+    flex-wrap: wrap;
+  }
+  
+  .summary-label,
+  .summary-value {
+    font-size: 1rem;
+  }
+  
+  .summary-item.total {
+    font-size: 1.125rem;
+  }
+  
+  .summary-item.total .summary-label {
+    font-size: 1.25rem;
+  }
+  
+  .summary-item.total .summary-value.price {
+    font-size: 1.5rem;
+  }
+  
+  .info-content {
+    font-size: 1rem;
+    line-height: 1.8;
+  }
+  
+  .bank-name {
+    font-size: 1.25rem;
+  }
+  
+  .account-number {
+    font-size: 1.5rem;
   }
   
   .payment-actions {
     flex-direction: column;
+    gap: 0.75rem;
   }
   
   .payment-actions .btn {
     max-width: 100%;
+    width: 100%;
+  }
+}
+
+@media (max-width: 480px) {
+  .payment {
+    padding: 1.5rem 0.75rem;
+  }
+  
+  .order-summary,
+  .payment-info {
+    padding: 1.25rem;
+  }
+  
+  .summary-title,
+  .info-title {
+    font-size: 1.25rem;
+  }
+  
+  .summary-item.total .summary-value.price {
+    font-size: 1.25rem;
+  }
+  
+  .account-number {
+    font-size: 1.25rem;
   }
 }

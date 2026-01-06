@@ -95,7 +95,29 @@
   }
 }
 
+@media (max-width: 968px) {
+  .faq {
+    padding: 3rem 1.5rem;
+  }
+  
+  .faq-list {
+    gap: 1.25rem;
+  }
+}
+
 @media (max-width: 768px) {
+  .faq {
+    padding: 2rem 1rem;
+  }
+  
+  .faq-list {
+    gap: 1rem;
+  }
+  
+  .faq-item {
+    border-radius: 1.5rem;
+  }
+  
   .faq-question {
     padding: 1.25rem 1.5rem;
     font-size: 1.125rem;
@@ -107,5 +129,29 @@
   
   .faq-answer p {
     font-size: 1rem;
+    line-height: 1.6;
+  }
+  
+  .faq-icon {
+    font-size: 1.25rem;
+  }
+}
+
+@media (max-width: 480px) {
+  .faq {
+    padding: 1.5rem 0.75rem;
+  }
+  
+  .faq-question {
+    padding: 1rem 1.25rem;
+    font-size: 1rem;
+  }
+  
+  .faq-answer {
+    padding: 1rem 1.25rem;
+  }
+  
+  .faq-answer p {
+    font-size: 0.95rem;
   }
 }

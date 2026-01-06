@@ -2,6 +2,9 @@
   min-height: calc(100vh - 80px);
   padding: 4rem 2rem;
   background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+  width: 100%;
+  box-sizing: border-box;
+  overflow-x: auto;
 }
 
 .admin-title {
@@ -41,7 +44,8 @@
 }
 
 .admin-content {
-  max-width: 1400px;
+  max-width: 95%;
+  width: 100%;
   margin: 0 auto;
 }
 
@@ -50,6 +54,8 @@
   padding: 2.5rem;
   border-radius: 2rem;
   box-shadow: 0 20px 40px rgba(79, 209, 199, 0.3);
+  width: 100%;
+  box-sizing: border-box;
 }
 
 .admin-section h2 {
@@ -61,12 +67,16 @@
 .table-container {
   overflow-x: auto;
   margin-bottom: 2rem;
+  width: 100%;
+  -webkit-overflow-scrolling: touch;
 }
 
 .admin-table {
   width: 100%;
+  min-width: 1600px;
   border-collapse: collapse;
   font-size: 1rem;
+  table-layout: fixed;
 }
 
 .admin-table thead {
@@ -79,22 +89,109 @@
   font-weight: 600;
   color: var(--mint-darker);
   border-bottom: 2px solid var(--mint-primary);
+  white-space: nowrap;
+}
+
+/* 컬럼 너비 설정 */
+.admin-table th.col-id,
+.admin-table td.col-id {
+  width: 80px;
+  min-width: 80px;
+}
+
+.admin-table th.col-plan,
+.admin-table td.col-plan {
+  width: 100px;
+  min-width: 100px;
+}
+
+.admin-table th.col-phone,
+.admin-table td.col-phone {
+  width: 130px;
+  min-width: 130px;
+}
+
+.admin-table th.col-email,
+.admin-table td.col-email {
+  width: 300px;
+  min-width: 300px;
+  max-width: 350px;
+}
+
+.admin-table th.col-password,
+.admin-table td.col-password {
+  width: 250px;
+  min-width: 250px;
+  max-width: 300px;
+}
+
+.admin-table th.col-backup,
+.admin-table td.col-backup {
+  width: 350px;
+  min-width: 350px;
+  max-width: 400px;
+}
+
+.admin-table th.col-status,
+.admin-table td.col-status {
+  width: 150px;
+  min-width: 150px;
+}
+
+.admin-table th.col-failure,
+.admin-table td.col-failure {
+  width: 300px;
+  min-width: 300px;
+}
+
+.admin-table th.col-date,
+.admin-table td.col-date {
+  width: 150px;
+  min-width: 150px;
 }
 
 .admin-table td {
   padding: 1rem;
+  border: 1px solid transparent;
   border-bottom: 1px solid var(--gray);
   word-break: break-word;
-  vertical-align: top;
+  word-wrap: break-word;
+  vertical-align: middle;
+  overflow-wrap: break-word;
+  position: relative;
+  box-sizing: border-box;
+  display: table-cell;
+}
+
+.admin-table td.copy-cell {
+  padding: 1rem;
+  display: table-cell;
+  vertical-align: middle;
 }
 
 .sensitive-data {
   font-family: 'Courier New', monospace;
   font-size: 0.9rem;
   color: var(--mint-darker);
-  max-width: 200px;
   word-break: break-all;
+  word-wrap: break-word;
   white-space: normal;
+  line-height: 1.5;
+  overflow-wrap: break-word;
+}
+
+.copy-cell.sensitive-data {
+  display: flex;
+  align-items: center;
+  width: 100%;
+  box-sizing: border-box;
+}
+
+.copy-cell.sensitive-data span {
+  min-width: 0;
+  overflow-wrap: break-word;
+  word-break: break-all;
+  display: inline-block;
 }
 
 .admin-table tbody tr:hover {
@@ -107,6 +204,109 @@
   border-radius: 0.5rem;
   font-size: 0.875rem;
   cursor: pointer;
+}
+
+.application-subtabs {
+  display: flex;
+  gap: 1rem;
+  margin-bottom: 2rem;
+  flex-wrap: wrap;
+}
+
+.subtab-button {
+  padding: 0.75rem 1.5rem;
+  border: 2px solid var(--mint-primary);
+  background: var(--white);
+  color: var(--mint-primary);
+  border-radius: 0.75rem;
+  font-size: 1rem;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.3s ease;
+}
+
+.subtab-button:hover {
+  background: var(--mint-light);
+}
+
+.subtab-button.active {
+  background: var(--mint-primary);
+  color: var(--white);
+}
+
+.copy-cell {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  width: 100%;
+  box-sizing: border-box;
+  vertical-align: middle;
+}
+
+.copy-cell span {
+  flex: 1;
+  word-break: break-all;
+  word-wrap: break-word;
+  line-height: 1.5;
+  overflow-wrap: break-word;
+  min-width: 0;
+}
+
+.btn-copy {
+  padding: 0.25rem 0.5rem;
+  background: var(--mint-light);
+  border: none;
+  border-radius: 0.5rem;
+  cursor: pointer;
+  font-size: 1rem;
+  transition: all 0.3s ease;
+  flex-shrink: 0;
+  height: fit-content;
+  white-space: nowrap;
+}
+
+.btn-copy:hover {
+  background: var(--mint-primary);
+  transform: scale(1.1);
+}
+
+.status-badge {
+  padding: 0.5rem 1rem;
+  border-radius: 0.5rem;
+  font-size: 0.875rem;
+  font-weight: 600;
+}
+
+.status-badge.completed {
+  background: #c6f6d5;
+  color: #22543d;
+}
+
+.status-badge.failed {
+  background: #fed7d7;
+  color: #742a2a;
+}
+
+.failure-reason-select {
+  padding: 0.5rem;
+  border: 2px solid #fc8181;
+  border-radius: 0.5rem;
+  font-size: 0.875rem;
+  cursor: pointer;
+  margin-top: 0.5rem;
+  width: 100%;
+}
+
+.failure-reason-text {
+  font-size: 0.875rem;
+  color: #742a2a;
+  font-weight: 500;
+}
+
+.status-control {
+  display: flex;
+  flex-direction: column;
+  gap: 0.5rem;
 }
 
 .btn-view {

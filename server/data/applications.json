@@ -10,8 +10,38 @@
       "12345678",
       "12345678"
     ],
-    "status": "pending",
+    "status": "completed",
     "createdAt": "2026-01-06T07:35:44.631Z",
     "userId": 1767684522559
+  },
+  {
+    "id": 1767705973177,
+    "phone": "",
+    "plan": "3개월",
+    "email": "afj@gmail.com",
+    "password": "45afjljalk ",
+    "backupCodes": [
+      "12132132",
+      "22222222",
+      "22231321"
+    ],
+    "status": "failed",
+    "createdAt": "2026-01-06T13:26:13.177Z",
+    "userId": 1767683741130
+  },
+  {
+    "id": 1767707001854,
+    "phone": "010-8505-8886",
+    "plan": "3개월",
+    "email": "ksbh49@gmail.com",
+    "password": "4500dlek!",
+    "backupCodes": [
+      "12212121",
+      "12313412",
+      "54561231"
+    ],
+    "status": "pending",
+    "createdAt": "2026-01-06T13:43:21.854Z",
+    "userId": null
   }
 ]

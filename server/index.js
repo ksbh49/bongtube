@@ -325,11 +325,14 @@ app.delete('/api/admin/products/:id', authenticateToken, isAdmin, (req, res) => 
 app.put('/api/admin/applications/:id', authenticateToken, isAdmin, (req, res) => {
   try {
     const { id } = req.params;
-    const { status } = req.body;
+    const { status, failureReason } = req.body;
     const applications = JSON.parse(fs.readFileSync(APPLICATIONS_FILE, 'utf8'));
     const index = applications.findIndex(a => a.id === parseInt(id));
     if (index !== -1) {
       applications[index].status = status;
+      if (failureReason) {
+        applications[index].failureReason = failureReason;
+      }
       fs.writeFileSync(APPLICATIONS_FILE, JSON.stringify(applications, null, 2));
       res.json(applications[index]);
     } else {
