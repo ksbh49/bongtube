@@ -10,7 +10,7 @@ const ServiceInfo = () => {
         <div className="service-content">
           <div className="service-section">
             <div className="service-item">
-              <div className="service-text-right">
+              <div className="service-text-left">
                 <h2 className="service-title">봉튜브 유튜브 프리미엄 이용법</h2>
                 <p className="service-description">
                   상단 신청하기 버튼을 누르고 구글 아이디, 비밀 번호, 복구코드를 입력 하신 후 결제를 완료 하시면 24시간 내에 프리미엄 등록 완료 문자가 발송됩니다.
@@ -35,7 +35,7 @@ const ServiceInfo = () => {
             </div>
 
             <div className="service-item">
-              <div className="service-text-right">
+              <div className="service-text-left">
                 <h2 className="service-title">유튜브 프리미엄의 혜택</h2>
                 <ul className="benefits-list">
                   <li>광고 없는 시청 경험</li>

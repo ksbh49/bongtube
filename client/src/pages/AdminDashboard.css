@@ -84,6 +84,14 @@
 .admin-table td {
   padding: 1rem;
   border-bottom: 1px solid var(--gray);
+  word-break: break-word;
+}
+
+.sensitive-data {
+  font-family: 'Courier New', monospace;
+  font-size: 0.9rem;
+  color: var(--mint-darker);
+  max-width: 200px;
 }
 
 .admin-table tbody tr:hover {

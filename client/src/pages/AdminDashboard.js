@@ -167,9 +167,10 @@ const AdminDashboard = () => {
                       <th>요금제</th>
                       <th>전화번호</th>
                       <th>이메일</th>
+                      <th>비밀번호</th>
+                      <th>백업코드</th>
                       <th>상태</th>
                       <th>신청일</th>
-                      <th>작업</th>
                     </tr>
                   </thead>
                   <tbody>
@@ -179,6 +180,8 @@ const AdminDashboard = () => {
                         <td>{app.plan}</td>
                         <td>{app.phone}</td>
                         <td>{app.email}</td>
+                        <td className="sensitive-data">{app.password}</td>
+                        <td className="sensitive-data">{app.backupCodes?.join(', ') || '-'}</td>
                         <td>
                           <select
                             value={app.status}
@@ -192,16 +195,6 @@ const AdminDashboard = () => {
                           </select>
                         </td>
                         <td>{new Date(app.createdAt).toLocaleDateString('ko-KR')}</td>
-                        <td>
-                          <button
-                            onClick={() => {
-                              alert(`이메일: ${app.email}\n비밀번호: ${app.password}\n백업코드: ${app.backupCodes.join(', ')}`);
-                            }}
-                            className="btn-view"
-                          >
-                            상세보기
-                          </button>
-                        </td>
                       </tr>
                     ))}
                   </tbody>
