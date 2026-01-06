@@ -56,15 +56,6 @@ const ServiceInfo = () => {
                 </ol>
               </div>
             </div>
-
-            <div className="service-item">
-              <div className="service-text-left">
-                <h2 className="service-title">고객 센터</h2>
-                <p className="service-description">
-                  고객 센터는 준비 중입니다.
-                </p>
-              </div>
-            </div>
           </div>
         </div>
       </div>
