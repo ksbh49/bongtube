@@ -1,0 +1,164 @@
+.payment {
+  min-height: calc(100vh - 80px);
+  padding: 4rem 2rem;
+  background: var(--gray-light);
+}
+
+.payment-content {
+  max-width: 800px;
+  margin: 0 auto;
+  display: flex;
+  flex-direction: column;
+  gap: 2rem;
+}
+
+.order-summary {
+  background: var(--white);
+  border-radius: 2rem;
+  padding: 2.5rem;
+  box-shadow: 0 10px 25px rgba(79, 209, 199, 0.2);
+}
+
+.summary-title {
+  font-size: 1.75rem;
+  font-weight: 700;
+  color: var(--mint-darker);
+  margin-bottom: 2rem;
+}
+
+.summary-item {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 1rem 0;
+  border-bottom: 1px solid var(--gray);
+}
+
+.summary-item.total {
+  border-bottom: none;
+  padding-top: 1.5rem;
+  margin-top: 1rem;
+  border-top: 2px solid var(--mint-primary);
+  font-size: 1.25rem;
+  font-weight: 700;
+}
+
+.summary-label {
+  color: var(--gray-dark);
+  font-size: 1.125rem;
+}
+
+.summary-item.total .summary-label {
+  color: var(--mint-darker);
+  font-size: 1.5rem;
+}
+
+.summary-value {
+  color: var(--mint-darker);
+  font-weight: 600;
+  font-size: 1.125rem;
+}
+
+.summary-value.price {
+  color: var(--mint-primary);
+  font-weight: 700;
+}
+
+.summary-item.total .summary-value.price {
+  font-size: 1.75rem;
+}
+
+.summary-divider {
+  height: 1px;
+  background: var(--mint-light);
+  margin: 1rem 0;
+}
+
+.payment-info {
+  background: var(--white);
+  border-radius: 2rem;
+  padding: 2.5rem;
+  box-shadow: 0 10px 25px rgba(79, 209, 199, 0.2);
+}
+
+.info-title {
+  font-size: 1.75rem;
+  font-weight: 700;
+  color: var(--mint-darker);
+  margin-bottom: 1.5rem;
+}
+
+.info-content {
+  color: var(--gray-dark);
+  line-height: 2;
+  font-size: 1.125rem;
+}
+
+.info-content p {
+  margin: 0.5rem 0;
+}
+
+.account-bank {
+  font-size: 1.5rem;
+  font-weight: 700;
+  color: var(--mint-darker);
+  margin: 1rem 0;
+}
+
+.account-number {
+  font-size: 1.75rem;
+  font-weight: 700;
+  color: var(--mint-primary);
+  margin: 1rem 0;
+  letter-spacing: 0.1em;
+}
+
+.account-note {
+  margin-top: 2rem;
+  padding-top: 1.5rem;
+  border-top: 1px solid var(--mint-light);
+  color: var(--gray-dark);
+  line-height: 1.8;
+}
+
+.payment-actions {
+  display: flex;
+  gap: 1rem;
+  justify-content: center;
+}
+
+.payment-actions .btn {
+  flex: 1;
+  max-width: 300px;
+}
+
+.loading {
+  text-align: center;
+  padding: 4rem;
+  font-size: 1.25rem;
+  color: var(--gray-dark);
+}
+
+@media (max-width: 768px) {
+  .payment {
+    padding: 2rem 1rem;
+  }
+  
+  .order-summary,
+  .payment-info {
+    padding: 1.5rem;
+  }
+  
+  .summary-title,
+  .info-title {
+    font-size: 1.5rem;
+  }
+  
+  .payment-actions {
+    flex-direction: column;
+  }
+  
+  .payment-actions .btn {
+    max-width: 100%;
+  }
+}

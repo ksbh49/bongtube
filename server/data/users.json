@@ -1,0 +1,20 @@
+[
+  {
+    "id": 1767683741130,
+    "username": "bongtubeadmin",
+    "password": "$2a$10$rS6SIK7I8hSVf.Sw0mpjyeIIah/KpYX/qZCoWwN7uqoqF0IwdeAwa",
+    "name": "관리자",
+    "phone": "",
+    "isAdmin": true,
+    "createdAt": "2026-01-06T07:15:41.130Z"
+  },
+  {
+    "id": 1767684522559,
+    "username": "ksbh49",
+    "password": "$2a$10$5S0B7Kj8gdQ30Mo3Nh5ZkOUe1P3T4XkSxbSLmS1eO7C36EH/BQpwy",
+    "name": "김성범",
+    "phone": "010-8505-8886",
+    "isAdmin": false,
+    "createdAt": "2026-01-06T07:28:42.559Z"
+  }
+]
