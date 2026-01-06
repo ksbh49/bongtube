@@ -40,6 +40,11 @@
   transition: all 0.3s ease;
 }
 
+.faq-question span:first-child {
+  text-align: left;
+  flex: 1;
+}
+
 .faq-question:hover {
   background: var(--mint-light);
 }
@@ -67,10 +72,16 @@
   animation: slideDown 0.3s ease;
 }
 
+.faq-answer {
+  text-align: left;
+}
+
 .faq-answer p {
   font-size: 1.125rem;
   color: var(--gray-dark);
   line-height: 1.8;
+  text-align: left;
+  margin: 0;
 }
 
 @keyframes slideDown {

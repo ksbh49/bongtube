@@ -85,6 +85,7 @@
   padding: 1rem;
   border-bottom: 1px solid var(--gray);
   word-break: break-word;
+  vertical-align: top;
 }
 
 .sensitive-data {
@@ -92,6 +93,8 @@
   font-size: 0.9rem;
   color: var(--mint-darker);
   max-width: 200px;
+  word-break: break-all;
+  white-space: normal;
 }
 
 .admin-table tbody tr:hover {
