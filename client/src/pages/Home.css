@@ -164,7 +164,6 @@
   border-radius: 1.5rem;
   padding: 2rem;
   border: 2px solid var(--mint-light);
-  text-align: left;
 }
 
 .process-title {
@@ -205,6 +204,9 @@
 .step-content {
   flex: 1;
   text-align: left;
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
 }
 
 .step-title {
@@ -227,7 +229,7 @@
   font-size: 0.95rem;
   margin-bottom: 0.75rem;
   transition: color 0.3s ease;
-  text-align: left;
+  text-align: center;
 }
 
 .faq-link:hover {
@@ -239,7 +241,7 @@
   font-size: 0.875rem;
   color: var(--gray-dark);
   margin: 0;
-  text-align: left;
+  text-align: center;
 }
 
 .plans-section {
