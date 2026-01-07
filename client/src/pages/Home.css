@@ -164,6 +164,7 @@
   border-radius: 1.5rem;
   padding: 2rem;
   border: 2px solid var(--mint-light);
+  text-align: left;
 }
 
 .process-title {
@@ -171,6 +172,7 @@
   font-weight: 700;
   color: var(--mint-darker);
   margin-bottom: 1.5rem;
+  text-align: left;
 }
 
 .process-steps {
@@ -184,6 +186,7 @@
   display: flex;
   gap: 1rem;
   align-items: start;
+  text-align: left;
 }
 
 .step-number {
@@ -201,17 +204,20 @@
 
 .step-content {
   flex: 1;
+  text-align: left;
 }
 
 .step-title {
   font-weight: 600;
   color: var(--mint-darker);
   margin-bottom: 0.25rem;
+  text-align: left;
 }
 
 .step-desc {
   font-size: 0.875rem;
   color: var(--gray-dark);
+  text-align: left;
 }
 
 .faq-link {
@@ -221,6 +227,7 @@
   font-size: 0.95rem;
   margin-bottom: 0.75rem;
   transition: color 0.3s ease;
+  text-align: left;
 }
 
 .faq-link:hover {
@@ -232,6 +239,7 @@
   font-size: 0.875rem;
   color: var(--gray-dark);
   margin: 0;
+  text-align: left;
 }
 
 .plans-section {
