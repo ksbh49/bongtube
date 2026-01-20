@@ -68,6 +68,18 @@ const AdminDashboard = () => {
     return map;
   }, [users]);
 
+  const pendingCount = useMemo(() => (
+    applications.filter((app) => app.status !== 'completed' && app.status !== 'as_pending' && app.status !== 'as_completed').length
+  ), [applications]);
+
+  const todayCompletedCount = useMemo(() => {
+    const today = new Date().toDateString();
+    return applications.filter((app) => {
+      if (app.status !== 'completed' || !app.createdAt) return false;
+      return new Date(app.createdAt).toDateString() === today;
+    }).length;
+  }, [applications]);
+
   const getOrdererName = (app) => {
     if (app.ordererName) return app.ordererName;
     if (app.userId && userMap.has(app.userId)) {
@@ -211,6 +223,10 @@ const AdminDashboard = () => {
             <span className="admin-logo">▶</span>
             <span>유튜브 프리미엄 주문 관리</span>
           </div>
+          <div className="admin-metrics">
+            <span className="metric-badge pending">대기 중 {pendingCount}건</span>
+            <span className="metric-badge completed">오늘 발송완료 {todayCompletedCount}건</span>
+          </div>
         </header>
 
         <div className="order-tabs">
@@ -259,6 +275,7 @@ const AdminDashboard = () => {
                 <th className="col-email">이메일</th>
                 <th className="col-password">비밀번호</th>
                 <th className="col-backup">백업코드</th>
+                <th className="col-time">신청시간</th>
                 <th className="col-actions">작업</th>
               </tr>
             </thead>
@@ -272,6 +289,9 @@ const AdminDashboard = () => {
                   <td className="col-email">{app.email || '-'}</td>
                   <td className="col-password">{app.password || '-'}</td>
                   <td className="col-backup">{app.backupCodes?.join(', ') || '-'}</td>
+                  <td className="col-time">
+                    {app.createdAt ? new Date(app.createdAt).toLocaleString('ko-KR') : '-'}
+                  </td>
                   <td className="col-actions">
                     {activeOrderTab === 'completed' ? (
                       <button className="action-btn wait" onClick={() => handleStatusChange(app.id, 'pending')}>
@@ -319,7 +339,7 @@ const AdminDashboard = () => {
               ))}
               {filteredApplications.length === 0 && (
                 <tr>
-                  <td colSpan={8} className="empty-row">표시할 주문이 없습니다.</td>
+                  <td colSpan={9} className="empty-row">표시할 주문이 없습니다.</td>
                 </tr>
               )}
             </tbody>
