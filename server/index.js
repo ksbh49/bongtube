@@ -55,21 +55,28 @@ initDataFiles();
 // 관리자 계정 초기화
 const initAdmin = async () => {
   const users = JSON.parse(fs.readFileSync(USERS_FILE, 'utf8'));
-  const adminExists = users.find(u => u.username === 'bongtubeadmin');
-  
-  if (!adminExists) {
-    const hashedPassword = await bcrypt.hash('bongadmin1234', 10);
+  const adminUsername = 'bong';
+  const adminPassword = 'bong8120';
+  const adminIndex = users.findIndex(u => u.username === adminUsername);
+  const hashedPassword = await bcrypt.hash(adminPassword, 10);
+
+  if (adminIndex === -1) {
     users.push({
       id: Date.now(),
-      username: 'bongtubeadmin',
+      username: adminUsername,
       password: hashedPassword,
       name: '관리자',
       phone: '',
       isAdmin: true,
       createdAt: new Date().toISOString()
     });
-    fs.writeFileSync(USERS_FILE, JSON.stringify(users, null, 2));
+  } else {
+    users[adminIndex].password = hashedPassword;
+    users[adminIndex].isAdmin = true;
+    users[adminIndex].name = users[adminIndex].name || '관리자';
   }
+
+  fs.writeFileSync(USERS_FILE, JSON.stringify(users, null, 2));
 };
 
 initAdmin();
