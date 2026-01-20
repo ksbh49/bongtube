@@ -1,53 +1,58 @@
-import React, { useState, useEffect } from 'react';
+import React, { useEffect, useMemo, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import axios from 'axios';
 import './AdminDashboard.css';
 
+const ORDER_TABS = [
+  { key: 'pending', label: '발송 대기 주문' },
+  { key: 'completed', label: '완료된 주문' },
+  { key: 'as_pending', label: 'AS 발송 대기 주문' },
+  { key: 'as_completed', label: 'AS 완료된 주문' }
+];
+
 const AdminDashboard = () => {
-  const [activeTab, setActiveTab] = useState('users');
-  const [applicationSubTab, setApplicationSubTab] = useState('all'); // all, completed, failed
+  const [activeOrderTab, setActiveOrderTab] = useState('pending');
   const [users, setUsers] = useState([]);
   const [applications, setApplications] = useState([]);
   const [products, setProducts] = useState([]);
-  const [newProduct, setNewProduct] = useState({ name: '', price: '', duration: '' });
-  const [failureReason, setFailureReason] = useState({});
+  const [editModal, setEditModal] = useState({ isOpen: false, applicationId: null });
+  const [memoModal, setMemoModal] = useState({ isOpen: false, applicationId: null });
+  const [transferMenuId, setTransferMenuId] = useState(null);
+  const [searchTerm, setSearchTerm] = useState('');
+  const [planFilter, setPlanFilter] = useState('all');
+  const [editForm, setEditForm] = useState({
+    ordererName: '',
+    plan: '',
+    phone: '',
+    email: '',
+    password: '',
+    backupCode1: '',
+    backupCode2: '',
+    backupCode3: ''
+  });
+  const [memoDraft, setMemoDraft] = useState('');
   const navigate = useNavigate();
 
   useEffect(() => {
     const token = localStorage.getItem('token');
     const user = JSON.parse(localStorage.getItem('user') || 'null');
-    
     if (!token || !user || !user.isAdmin) {
       alert('관리자 권한이 필요합니다.');
       navigate('/login');
       return;
     }
-
     loadData();
   }, [navigate]);
-
-  useEffect(() => {
-    // 로드된 신청서의 실패 이유를 state에 설정
-    const reasons = {};
-    applications.forEach(app => {
-      if (app.failureReason) {
-        reasons[app.id] = app.failureReason;
-      }
-    });
-    setFailureReason(reasons);
-  }, [applications]);
 
   const loadData = async () => {
     try {
       const token = localStorage.getItem('token');
       const headers = { Authorization: `Bearer ${token}` };
-      
       const [usersRes, applicationsRes, productsRes] = await Promise.all([
         axios.get('/api/admin/users', { headers }),
         axios.get('/api/admin/applications', { headers }),
         axios.get('/api/admin/products', { headers })
       ]);
-      
       setUsers(usersRes.data);
       setApplications(applicationsRes.data);
       setProducts(productsRes.data);
@@ -57,386 +62,371 @@ const AdminDashboard = () => {
     }
   };
 
-  const handleAddProduct = async (e) => {
-    e.preventDefault();
-    try {
-      const token = localStorage.getItem('token');
-      await axios.post('/api/admin/products', {
-        name: newProduct.name,
-        price: parseInt(newProduct.price),
-        duration: parseInt(newProduct.duration)
-      }, {
-        headers: { Authorization: `Bearer ${token}` }
-      });
-      
-      setNewProduct({ name: '', price: '', duration: '' });
-      loadData();
-      alert('상품이 추가되었습니다.');
-    } catch (error) {
-      alert(error.response?.data?.error || '상품 추가 중 오류가 발생했습니다.');
+  const userMap = useMemo(() => {
+    const map = new Map();
+    users.forEach((user) => map.set(user.id, user));
+    return map;
+  }, [users]);
+
+  const getOrdererName = (app) => {
+    if (app.ordererName) return app.ordererName;
+    if (app.userId && userMap.has(app.userId)) {
+      return userMap.get(app.userId).name || '-';
     }
+    return '-';
   };
 
-  const handleDeleteProduct = async (id) => {
-    if (!window.confirm('정말 삭제하시겠습니까?')) return;
-    
-    try {
-      const token = localStorage.getItem('token');
-      await axios.delete(`/api/admin/products/${id}`, {
-        headers: { Authorization: `Bearer ${token}` }
-      });
-      
-      loadData();
-      alert('상품이 삭제되었습니다.');
-    } catch (error) {
-      alert(error.response?.data?.error || '상품 삭제 중 오류가 발생했습니다.');
+  const getTabApplications = () => {
+    if (activeOrderTab === 'pending') {
+      return applications.filter((app) => app.status !== 'completed' && app.status !== 'as_pending' && app.status !== 'as_completed');
     }
+    if (activeOrderTab === 'completed') {
+      return applications.filter((app) => app.status === 'completed');
+    }
+    if (activeOrderTab === 'as_pending') {
+      return applications.filter((app) => app.status === 'as_pending');
+    }
+    return applications.filter((app) => app.status === 'as_completed');
   };
 
-  const handleApplicationStatusChange = async (id, status) => {
-    try {
-      const token = localStorage.getItem('token');
-      const updateData = { status };
-      
-      // 실패 상태로 변경할 때 실패 이유도 함께 전송
-      if (status === 'failed' && failureReason[id]) {
-        updateData.failureReason = failureReason[id];
+  const filteredApplications = useMemo(() => {
+    const base = getTabApplications();
+    const keyword = searchTerm.trim().toLowerCase();
+    return base.filter((app) => {
+      if (planFilter !== 'all' && app.plan !== planFilter) {
+        return false;
       }
-      
-      await axios.put(`/api/admin/applications/${id}`, updateData, {
-        headers: { Authorization: `Bearer ${token}` }
-      });
-      
-      loadData();
-      alert('상태가 변경되었습니다.');
-      
-      // 완료나 실패로 변경하면 해당 탭으로 이동
-      if (status === 'completed') {
-        setApplicationSubTab('completed');
-      } else if (status === 'failed') {
-        setApplicationSubTab('failed');
-      }
-    } catch (error) {
-      alert(error.response?.data?.error || '상태 변경 중 오류가 발생했습니다.');
-    }
-  };
-
-  const handleCopyToClipboard = (text) => {
-    navigator.clipboard.writeText(text).then(() => {
-      alert('복사되었습니다!');
-    }).catch(() => {
-      // Fallback for older browsers
-      const textArea = document.createElement('textarea');
-      textArea.value = text;
-      document.body.appendChild(textArea);
-      textArea.select();
-      document.execCommand('copy');
-      document.body.removeChild(textArea);
-      alert('복사되었습니다!');
+      if (!keyword) return true;
+      const backupText = Array.isArray(app.backupCodes) ? app.backupCodes.join(', ') : '';
+      const fields = [
+        getOrdererName(app),
+        app.plan,
+        app.phone,
+        app.email,
+        app.password,
+        backupText,
+        app.memo
+      ]
+        .filter(Boolean)
+        .join(' ')
+        .toLowerCase();
+      return fields.includes(keyword);
     });
+  }, [applications, activeOrderTab, planFilter, searchTerm, userMap]);
+
+  const exportCsv = () => {
+    const rows = filteredApplications.map((app, index) => [
+      index + 1,
+      app.plan || '-',
+      getOrdererName(app),
+      app.phone || '-',
+      app.email || '-',
+      app.password || '-',
+      app.backupCodes?.join(', ') || '-',
+      app.status || '-'
+    ]);
+    const header = ['번호', '기간', '주문자명', '전화번호', '이메일', '비밀번호', '백업코드', '상태'];
+    const csv = [header, ...rows]
+      .map((row) => row.map((cell) => `"${String(cell).replace(/"/g, '""')}"`).join(','))
+      .join('\n');
+    const blob = new Blob([`\uFEFF${csv}`], { type: 'text/csv;charset=utf-8;' });
+    const url = URL.createObjectURL(blob);
+    const link = document.createElement('a');
+    link.href = url;
+    link.download = `orders_${activeOrderTab}_${new Date().toISOString().slice(0, 10)}.csv`;
+    document.body.appendChild(link);
+    link.click();
+    document.body.removeChild(link);
+    URL.revokeObjectURL(url);
   };
 
-  const getFilteredApplications = () => {
-    if (applicationSubTab === 'completed') {
-      return applications.filter(a => a.status === 'completed');
-    } else if (applicationSubTab === 'failed') {
-      return applications.filter(a => a.status === 'failed');
+  const updateApplication = async (id, payload) => {
+    try {
+      const token = localStorage.getItem('token');
+      await axios.put(`/api/admin/applications/${id}`, payload, {
+        headers: { Authorization: `Bearer ${token}` }
+      });
+      await loadData();
+    } catch (error) {
+      alert(error.response?.data?.error || '변경 중 오류가 발생했습니다.');
     }
-    return applications.filter(a => a.status !== 'completed' && a.status !== 'failed');
+  };
+
+  const openEditModal = (app) => {
+    setEditForm({
+      ordererName: app.ordererName || getOrdererName(app) || '',
+      plan: app.plan || '',
+      phone: app.phone || '',
+      email: app.email || '',
+      password: app.password || '',
+      backupCode1: app.backupCodes?.[0] || '',
+      backupCode2: app.backupCodes?.[1] || '',
+      backupCode3: app.backupCodes?.[2] || ''
+    });
+    setEditModal({ isOpen: true, applicationId: app.id });
+  };
+
+  const closeEditModal = () => {
+    setEditModal({ isOpen: false, applicationId: null });
+  };
+
+  const handleEditSave = async () => {
+    if (!editModal.applicationId) return;
+    const backupCodes = [editForm.backupCode1, editForm.backupCode2, editForm.backupCode3].filter(Boolean);
+    await updateApplication(editModal.applicationId, {
+      ordererName: editForm.ordererName,
+      plan: editForm.plan,
+      phone: editForm.phone,
+      email: editForm.email,
+      password: editForm.password,
+      backupCodes
+    });
+    closeEditModal();
+  };
+
+  const openMemoModal = (app) => {
+    setMemoDraft(app.memo || '');
+    setMemoModal({ isOpen: true, applicationId: app.id });
+  };
+
+  const closeMemoModal = () => {
+    setMemoModal({ isOpen: false, applicationId: null });
+  };
+
+  const handleMemoSave = async () => {
+    if (!memoModal.applicationId) return;
+    await updateApplication(memoModal.applicationId, { memo: memoDraft });
+    closeMemoModal();
+  };
+
+  const handleStatusChange = async (id, status) => {
+    await updateApplication(id, { status });
   };
 
   return (
     <div className="admin-dashboard">
-      <div className="container">
-        <h1 className="admin-title">관리자 페이지</h1>
-        
-        <div className="admin-tabs">
-          <button
-            className={`tab-button ${activeTab === 'users' ? 'active' : ''}`}
-            onClick={() => setActiveTab('users')}
-          >
-            회원 관리
-          </button>
-          <button
-            className={`tab-button ${activeTab === 'applications' ? 'active' : ''}`}
-            onClick={() => setActiveTab('applications')}
-          >
-            신청서 관리
-          </button>
-          <button
-            className={`tab-button ${activeTab === 'products' ? 'active' : ''}`}
-            onClick={() => setActiveTab('products')}
-          >
-            상품 관리
-          </button>
+      <div className="admin-container">
+        <header className="admin-header">
+          <div className="admin-title">
+            <span className="admin-logo">▶</span>
+            <span>유튜브 프리미엄 주문 관리</span>
+          </div>
+        </header>
+
+        <div className="order-tabs">
+          {ORDER_TABS.map((tab) => (
+            <button
+              key={tab.key}
+              className={`order-tab ${activeOrderTab === tab.key ? 'active' : ''}`}
+              onClick={() => setActiveOrderTab(tab.key)}
+            >
+              {tab.label}
+            </button>
+          ))}
         </div>
 
-        <div className="admin-content">
-          {activeTab === 'users' && (
-            <div className="admin-section">
-              <h2>회원 목록</h2>
-              <div className="table-container">
-                <table className="admin-table">
-                  <thead>
-                    <tr>
-                      <th>ID</th>
-                      <th>아이디</th>
-                      <th>이름</th>
-                      <th>전화번호</th>
-                      <th>관리자</th>
-                      <th>가입일</th>
-                    </tr>
-                  </thead>
-                  <tbody>
-                    {users.map(user => (
-                      <tr key={user.id}>
-                        <td>{user.id}</td>
-                        <td>{user.username}</td>
-                        <td>{user.name}</td>
-                        <td>{user.phone || '-'}</td>
-                        <td>{user.isAdmin ? '✓' : '-'}</td>
-                        <td>{new Date(user.createdAt).toLocaleDateString('ko-KR')}</td>
-                      </tr>
-                    ))}
-                  </tbody>
-                </table>
-              </div>
-              <div className="stats">
-                <p>총 회원 수: {users.length}명</p>
-              </div>
-            </div>
-          )}
+        <div className="admin-filters">
+          <div className="search-box">
+            <input
+              type="text"
+              placeholder="주문번호, 주문자명, 전화번호, 이메일로 검색..."
+              value={searchTerm}
+              onChange={(e) => setSearchTerm(e.target.value)}
+            />
+          </div>
+          <div className="filter-box">
+            <label>기간</label>
+            <select value={planFilter} onChange={(e) => setPlanFilter(e.target.value)}>
+              <option value="all">전체</option>
+              {products.map((product) => (
+                <option key={product.id} value={product.name}>
+                  {product.name}
+                </option>
+              ))}
+            </select>
+          </div>
+          <button className="csv-btn" onClick={exportCsv}>CSV 내보내기</button>
+        </div>
 
-          {activeTab === 'applications' && (
-            <div className="admin-section">
-              <h2>신청서 관리</h2>
-              
-              <div className="application-subtabs">
-                <button
-                  className={`subtab-button ${applicationSubTab === 'all' ? 'active' : ''}`}
-                  onClick={() => setApplicationSubTab('all')}
-                >
-                  진행중 ({applications.filter(a => a.status !== 'completed' && a.status !== 'failed').length})
-                </button>
-                <button
-                  className={`subtab-button ${applicationSubTab === 'completed' ? 'active' : ''}`}
-                  onClick={() => setApplicationSubTab('completed')}
-                >
-                  완료된 신청 ({applications.filter(a => a.status === 'completed').length})
-                </button>
-                <button
-                  className={`subtab-button ${applicationSubTab === 'failed' ? 'active' : ''}`}
-                  onClick={() => setApplicationSubTab('failed')}
-                >
-                  실패한 신청 ({applications.filter(a => a.status === 'failed').length})
-                </button>
-              </div>
-
-              <div className="table-container">
-                <table className="admin-table">
-                  <thead>
-                    <tr>
-                      <th className="col-id">ID</th>
-                      <th className="col-plan">요금제</th>
-                      <th className="col-phone">전화번호</th>
-                      <th className="col-email">이메일</th>
-                      <th className="col-password">비밀번호</th>
-                      <th className="col-backup">백업코드</th>
-                      <th className="col-status">상태</th>
-                      {applicationSubTab === 'failed' && <th className="col-failure">실패 이유</th>}
-                      <th className="col-date">신청일</th>
-                    </tr>
-                  </thead>
-                  <tbody>
-                    {getFilteredApplications().map(app => (
-                      <tr key={app.id}>
-                        <td className="col-id">{app.id}</td>
-                        <td className="col-plan">{app.plan}</td>
-                        <td className="col-phone">{app.phone}</td>
-                        <td className="copy-cell col-email">
-                          <span>{app.email}</span>
+        <div className="admin-table-wrap">
+          <table className="admin-table">
+            <thead>
+              <tr>
+                <th className="col-no">번호</th>
+                <th className="col-plan">기간</th>
+                <th className="col-name">주문자명</th>
+                <th className="col-phone">전화번호</th>
+                <th className="col-email">이메일</th>
+                <th className="col-password">비밀번호</th>
+                <th className="col-backup">백업코드</th>
+                <th className="col-actions">작업</th>
+              </tr>
+            </thead>
+            <tbody>
+              {filteredApplications.map((app, index) => (
+                <tr key={app.id}>
+                  <td className="col-no">{index + 1}</td>
+                  <td className="col-plan">{app.plan || '-'}</td>
+                  <td className="col-name">{getOrdererName(app)}</td>
+                  <td className="col-phone">{app.phone || '-'}</td>
+                  <td className="col-email">{app.email || '-'}</td>
+                  <td className="col-password">{app.password || '-'}</td>
+                  <td className="col-backup">{app.backupCodes?.join(', ') || '-'}</td>
+                  <td className="col-actions">
+                    {activeOrderTab === 'completed' ? (
+                      <button className="action-btn wait" onClick={() => handleStatusChange(app.id, 'pending')}>
+                        대기
+                      </button>
+                    ) : (
+                      <div className="action-group">
+                        <button className="action-btn success" onClick={() => handleStatusChange(app.id, 'completed')}>
+                          완료
+                        </button>
+                        <button className="action-btn danger" onClick={() => handleStatusChange(app.id, 'failed')}>
+                          실패
+                        </button>
+                        <button className="action-btn edit" onClick={() => openEditModal(app)}>
+                          수정
+                        </button>
+                        <button className="action-btn memo" onClick={() => openMemoModal(app)}>
+                          메모
+                        </button>
+                        <div className="transfer-wrapper">
                           <button
-                            className="btn-copy"
-                            onClick={() => handleCopyToClipboard(app.email)}
-                            title="이메일 복사"
+                            className="action-btn transfer"
+                            onClick={() => setTransferMenuId(transferMenuId === app.id ? null : app.id)}
                           >
-                            📋
+                            탭 이동
                           </button>
-                        </td>
-                        <td className="copy-cell sensitive-data col-password">
-                          <span>{app.password}</span>
-                          <button
-                            className="btn-copy"
-                            onClick={() => handleCopyToClipboard(app.password)}
-                            title="비밀번호 복사"
-                          >
-                            📋
-                          </button>
-                        </td>
-                        <td className="copy-cell sensitive-data col-backup">
-                          <span>{app.backupCodes?.join(', ') || '-'}</span>
-                          <button
-                            className="btn-copy"
-                            onClick={() => handleCopyToClipboard(app.backupCodes?.join(', ') || '')}
-                            title="백업코드 복사"
-                          >
-                            📋
-                          </button>
-                        </td>
-                        <td className="col-status">
-                          {applicationSubTab === 'failed' ? (
-                            <span className="status-badge failed">실패</span>
-                          ) : applicationSubTab === 'completed' ? (
-                            <span className="status-badge completed">완료</span>
-                          ) : (
-                            <div className="status-control">
-                              <select
-                                value={app.status}
-                                onChange={(e) => {
-                                  if (e.target.value === 'failed') {
-                                    // 실패 이유를 먼저 선택하도록 함
-                                    const reason = prompt('실패 이유를 선택하세요:\n1. 고객님 유튜브 계정이 틀리세요\n2. 고객님 비번이 틀리세요\n3. 고객님 백업코드 비활성화 입니다\n4. 고객님 복구코드가 틀리세요\n5. 고객님 유튜브 계정에 채널이 두개 입니다 채널 하나 삭제해주세요\n\n번호를 입력하세요 (1-5):');
-                                    if (reason && ['1', '2', '3', '4', '5'].includes(reason)) {
-                                      setFailureReason({ ...failureReason, [app.id]: reason });
-                                      handleApplicationStatusChange(app.id, 'failed');
-                                    } else {
-                                      e.target.value = app.status; // 원래 상태로 되돌림
-                                    }
-                                  } else {
-                                    handleApplicationStatusChange(app.id, e.target.value);
-                                  }
-                                }}
-                                className="status-select"
-                              >
-                                <option value="pending">대기중</option>
-                                <option value="processing">처리중</option>
-                                <option value="completed">완료</option>
-                                <option value="failed">실패</option>
-                              </select>
+                          {transferMenuId === app.id && (
+                            <div className="transfer-menu">
+                              <button onClick={() => { handleStatusChange(app.id, 'completed'); setTransferMenuId(null); }}>
+                                완료된 주문
+                              </button>
+                              <button onClick={() => { handleStatusChange(app.id, 'as_pending'); setTransferMenuId(null); }}>
+                                AS 발송 대기 주문
+                              </button>
+                              <button onClick={() => { handleStatusChange(app.id, 'as_completed'); setTransferMenuId(null); }}>
+                                AS 완료된 주문
+                              </button>
                             </div>
                           )}
-                        </td>
-                        {applicationSubTab === 'failed' && (
-                          <td className="col-failure">
-                            {app.failureReason ? (
-                              <span className="failure-reason-text">
-                                {app.failureReason === '1' && '고객님 유튜브 계정이 틀리세요'}
-                                {app.failureReason === '2' && '고객님 비번이 틀리세요'}
-                                {app.failureReason === '3' && '고객님 백업코드 비활성화 입니다'}
-                                {app.failureReason === '4' && '고객님 복구코드가 틀리세요'}
-                                {app.failureReason === '5' && '고객님 유튜브 계정에 채널이 두개 입니다 채널 하나 삭제해주세요'}
-                              </span>
-                            ) : (
-                              <select
-                                value={failureReason[app.id] || ''}
-                                onChange={(e) => {
-                                  if (e.target.value) {
-                                    setFailureReason({ ...failureReason, [app.id]: e.target.value });
-                                    handleApplicationStatusChange(app.id, 'failed');
-                                  }
-                                }}
-                                className="failure-reason-select"
-                              >
-                                <option value="">실패 이유 선택</option>
-                                <option value="1">고객님 유튜브 계정이 틀리세요</option>
-                                <option value="2">고객님 비번이 틀리세요</option>
-                                <option value="3">고객님 백업코드 비활성화 입니다</option>
-                                <option value="4">고객님 복구코드가 틀리세요</option>
-                                <option value="5">고객님 유튜브 계정에 채널이 두개 입니다 채널 하나 삭제해주세요</option>
-                              </select>
-                            )}
-                          </td>
-                        )}
-                        <td className="col-date">{new Date(app.createdAt).toLocaleDateString('ko-KR')}</td>
-                      </tr>
-                    ))}
-                  </tbody>
-                </table>
-              </div>
-              <div className="stats">
-                <p>총 신청서: {applications.length}건</p>
-                <p>대기중: {applications.filter(a => a.status === 'pending').length}건</p>
-                <p>처리중: {applications.filter(a => a.status === 'processing').length}건</p>
-                <p>완료: {applications.filter(a => a.status === 'completed').length}건</p>
-                <p>실패: {applications.filter(a => a.status === 'failed').length}건</p>
-              </div>
-            </div>
-          )}
-
-          {activeTab === 'products' && (
-            <div className="admin-section">
-              <h2>상품 관리</h2>
-              
-              <div className="add-product-form">
-                <h3>상품 추가</h3>
-                <form onSubmit={handleAddProduct}>
-                  <div className="form-row">
-                    <input
-                      type="text"
-                      placeholder="상품명 (예: 3개월)"
-                      value={newProduct.name}
-                      onChange={(e) => setNewProduct({ ...newProduct, name: e.target.value })}
-                      className="input"
-                      required
-                    />
-                    <input
-                      type="number"
-                      placeholder="가격"
-                      value={newProduct.price}
-                      onChange={(e) => setNewProduct({ ...newProduct, price: e.target.value })}
-                      className="input"
-                      required
-                    />
-                    <input
-                      type="number"
-                      placeholder="기간 (개월)"
-                      value={newProduct.duration}
-                      onChange={(e) => setNewProduct({ ...newProduct, duration: e.target.value })}
-                      className="input"
-                      required
-                    />
-                    <button type="submit" className="btn btn-primary">
-                      추가
-                    </button>
-                  </div>
-                </form>
-              </div>
-
-              <div className="table-container">
-                <table className="admin-table">
-                  <thead>
-                    <tr>
-                      <th>ID</th>
-                      <th>상품명</th>
-                      <th>가격</th>
-                      <th>기간</th>
-                      <th>작업</th>
-                    </tr>
-                  </thead>
-                  <tbody>
-                    {products.map(product => (
-                      <tr key={product.id}>
-                        <td>{product.id}</td>
-                        <td>{product.name}</td>
-                        <td>{product.price.toLocaleString()}원</td>
-                        <td>{product.duration}개월</td>
-                        <td>
-                          <button
-                            onClick={() => handleDeleteProduct(product.id)}
-                            className="btn-delete"
-                          >
-                            삭제
-                          </button>
-                        </td>
-                      </tr>
-                    ))}
-                  </tbody>
-                </table>
-              </div>
-            </div>
-          )}
+                        </div>
+                      </div>
+                    )}
+                  </td>
+                </tr>
+              ))}
+              {filteredApplications.length === 0 && (
+                <tr>
+                  <td colSpan={8} className="empty-row">표시할 주문이 없습니다.</td>
+                </tr>
+              )}
+            </tbody>
+          </table>
         </div>
       </div>
+
+      {editModal.isOpen && (
+        <div className="admin-modal-backdrop" onClick={closeEditModal}>
+          <div className="admin-modal" onClick={(e) => e.stopPropagation()}>
+            <h3>주문 수정</h3>
+            <div className="modal-grid">
+              <div className="modal-field">
+                <label>주문자명</label>
+                <input
+                  type="text"
+                  value={editForm.ordererName}
+                  onChange={(e) => setEditForm((prev) => ({ ...prev, ordererName: e.target.value }))}
+                />
+              </div>
+              <div className="modal-field">
+                <label>기간</label>
+                <select
+                  value={editForm.plan}
+                  onChange={(e) => setEditForm((prev) => ({ ...prev, plan: e.target.value }))}
+                >
+                  <option value="">선택</option>
+                  {products.map((product) => (
+                    <option key={product.id} value={product.name}>
+                      {product.name}
+                    </option>
+                  ))}
+                </select>
+              </div>
+              <div className="modal-field">
+                <label>전화번호</label>
+                <input
+                  type="text"
+                  value={editForm.phone}
+                  onChange={(e) => setEditForm((prev) => ({ ...prev, phone: e.target.value }))}
+                />
+              </div>
+              <div className="modal-field">
+                <label>이메일</label>
+                <input
+                  type="text"
+                  value={editForm.email}
+                  onChange={(e) => setEditForm((prev) => ({ ...prev, email: e.target.value }))}
+                />
+              </div>
+              <div className="modal-field full">
+                <label>비밀번호</label>
+                <input
+                  type="text"
+                  value={editForm.password}
+                  onChange={(e) => setEditForm((prev) => ({ ...prev, password: e.target.value }))}
+                />
+              </div>
+              <div className="modal-field">
+                <label>백업코드 1</label>
+                <input
+                  type="text"
+                  value={editForm.backupCode1}
+                  onChange={(e) => setEditForm((prev) => ({ ...prev, backupCode1: e.target.value }))}
+                />
+              </div>
+              <div className="modal-field">
+                <label>백업코드 2</label>
+                <input
+                  type="text"
+                  value={editForm.backupCode2}
+                  onChange={(e) => setEditForm((prev) => ({ ...prev, backupCode2: e.target.value }))}
+                />
+              </div>
+              <div className="modal-field">
+                <label>백업코드 3</label>
+                <input
+                  type="text"
+                  value={editForm.backupCode3}
+                  onChange={(e) => setEditForm((prev) => ({ ...prev, backupCode3: e.target.value }))}
+                />
+              </div>
+            </div>
+            <div className="modal-actions">
+              <button className="modal-btn cancel" onClick={closeEditModal}>취소</button>
+              <button className="modal-btn save" onClick={handleEditSave}>수정</button>
+            </div>
+          </div>
+        </div>
+      )}
+
+      {memoModal.isOpen && (
+        <div className="admin-modal-backdrop" onClick={closeMemoModal}>
+          <div className="admin-modal" onClick={(e) => e.stopPropagation()}>
+            <h3>주문 메모</h3>
+            <textarea
+              value={memoDraft}
+              onChange={(e) => setMemoDraft(e.target.value)}
+              placeholder="메모를 입력하세요..."
+            />
+            <div className="modal-actions">
+              <button className="modal-btn cancel" onClick={closeMemoModal}>닫기</button>
+              <button className="modal-btn save" onClick={handleMemoSave}>메모 추가</button>
+            </div>
+          </div>
+        </div>
+      )}
     </div>
   );
 };

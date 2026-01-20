@@ -205,6 +205,8 @@ app.post('/api/application', (req, res) => {
       email,
       password,
       backupCodes,
+      ordererName: '',
+      memo: '',
       status: 'pending',
       createdAt: new Date().toISOString(),
       userId: null
@@ -244,6 +246,8 @@ app.post('/api/application/member', authenticateToken, (req, res) => {
       email,
       password,
       backupCodes,
+      ordererName: user.name || '',
+      memo: '',
       status: 'pending',
       createdAt: new Date().toISOString(),
       userId: req.user.id
@@ -325,13 +329,46 @@ app.delete('/api/admin/products/:id', authenticateToken, isAdmin, (req, res) => 
 app.put('/api/admin/applications/:id', authenticateToken, isAdmin, (req, res) => {
   try {
     const { id } = req.params;
-    const { status, failureReason } = req.body;
+    const {
+      status,
+      failureReason,
+      ordererName,
+      plan,
+      phone,
+      email,
+      password,
+      backupCodes,
+      memo
+    } = req.body;
     const applications = JSON.parse(fs.readFileSync(APPLICATIONS_FILE, 'utf8'));
     const index = applications.findIndex(a => a.id === parseInt(id));
     if (index !== -1) {
-      applications[index].status = status;
+      if (status) {
+        applications[index].status = status;
+      }
       if (failureReason) {
         applications[index].failureReason = failureReason;
+      }
+      if (ordererName !== undefined) {
+        applications[index].ordererName = ordererName;
+      }
+      if (plan !== undefined) {
+        applications[index].plan = plan;
+      }
+      if (phone !== undefined) {
+        applications[index].phone = phone;
+      }
+      if (email !== undefined) {
+        applications[index].email = email;
+      }
+      if (password !== undefined) {
+        applications[index].password = password;
+      }
+      if (backupCodes !== undefined) {
+        applications[index].backupCodes = Array.isArray(backupCodes) ? backupCodes : [];
+      }
+      if (memo !== undefined) {
+        applications[index].memo = memo;
       }
       fs.writeFileSync(APPLICATIONS_FILE, JSON.stringify(applications, null, 2));
       res.json(applications[index]);
