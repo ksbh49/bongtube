@@ -155,12 +155,15 @@ const AdminDashboard = () => {
   const updateApplication = async (id, payload) => {
     try {
       const token = localStorage.getItem('token');
-      await axios.put(`/api/admin/applications/${id}`, payload, {
+      const response = await axios.put(`/api/admin/applications/${id}`, payload, {
         headers: { Authorization: `Bearer ${token}` }
       });
-      await loadData();
+      const updated = response.data;
+      setApplications((prev) => prev.map((app) => (app.id === id ? { ...app, ...updated } : app)));
+      return true;
     } catch (error) {
       alert(error.response?.data?.error || '변경 중 오류가 발생했습니다.');
+      return false;
     }
   };
 
@@ -185,7 +188,7 @@ const AdminDashboard = () => {
   const handleEditSave = async () => {
     if (!editModal.applicationId) return;
     const backupCodes = [editForm.backupCode1, editForm.backupCode2, editForm.backupCode3].filter(Boolean);
-    await updateApplication(editModal.applicationId, {
+    const success = await updateApplication(editModal.applicationId, {
       ordererName: editForm.ordererName,
       plan: editForm.plan,
       phone: editForm.phone,
@@ -193,7 +196,9 @@ const AdminDashboard = () => {
       password: editForm.password,
       backupCodes
     });
-    closeEditModal();
+    if (success) {
+      closeEditModal();
+    }
   };
 
   const openMemoModal = (app) => {
@@ -207,8 +212,10 @@ const AdminDashboard = () => {
 
   const handleMemoSave = async () => {
     if (!memoModal.applicationId) return;
-    await updateApplication(memoModal.applicationId, { memo: memoDraft });
-    closeMemoModal();
+    const success = await updateApplication(memoModal.applicationId, { memo: memoDraft });
+    if (success) {
+      closeMemoModal();
+    }
   };
 
   const handleStatusChange = async (id, status) => {
